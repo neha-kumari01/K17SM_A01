@@ -5,12 +5,46 @@
 
 struct process
 {
+	int id;
 	int AT;
 	int BT,BT1;
+	int CT;
 	int WT;
-	int CT;	
+	int TAT;
 	int flag;
+	int check;
 } p[3];
+//declaring queue
+int ready_queue[150];
+int front=-1;
+int rear=-1;
+void insert(int index)  
+{
+	if (rear == 149)
+        printf("Queue Overflow \n");
+        else
+        {
+        if (front == - 1)
+        /*If queue is initially empty */
+        front = 0;
+        rear = rear + 1;
+        ready_queue[rear] =index;
+        printf("Process entered readyQueue :%d\n",ready_queue[rear]);
+        }
+}
+void qdelete()
+{
+	if (front == - 1 || front > rear)
+    {
+        printf("Queue Underflow \n");
+        return ;
+    }
+    else
+    {
+        printf("Element deleted from queue is : %d\n", ready_queue[front]);
+        front = front + 1;
+    }
+}
 
 int tq1=3;
 int tq2=6;
@@ -21,29 +55,109 @@ int TotalTAT=0;
 
 void firstIteration()
 {
-	int i=4,j;
+	int i=4,j,k;
 	int time=0;
-    for(time=0,j=0;i!=0;)
-			
-		if(p[i].BT >= tq1 && p[i].BT>0)
+	insert(0);
+	p[0].check=1;
+	int n=ready_queue[rear];
+	while(n!=-1)
+	{
+	if(p[n].BT >= tq1 && p[n].BT>0)
+	{
+            printf("Process at time %d is P%d\n",time,n);			        
+	    p[n].BT=p[n].BT - tq1;
+		time+=tq1;
+		p[n].flag=1;   //counting number of times process execute
+		for(k=n+1;k<4;k++) //placing in ready queue
 		{
-		        printf("Process at time %d is P%d\n",time,i);
-				p[i].BT=p[i].BT - tq1;
-				time+=tq1;
-				for(j=1;j<4;j++)
-				{
-					p[j].AT<time;
-					insertQueue(j);					
-				}
-				deleteQueue(i)
-	     	}
-	insertQueue();
-	
-	deleteQueue();
-	
-	
+		if(p[k].AT<time && p[k].check==0)
+		{
+		insert(k);
+		p[k].check++;
+    	}
+        }
+        if(p[n].BT>0)
+		insert(n);		
+					   
+	qdelete();
+	n=ready_queue[front];
+   }
+   
+   	if(p[0].flag==1)
+   	if(p[1].flag==1)
+   	if(p[2].flag==1)
+   	if(p[3].flag==1)
+   	{
+   	break;	
+   }
+}
 }
 
+void secondIteration()
+{
+	int k;
+	int n=ready_queue[front];
+	while(n!=-1)
+	{
+	if(p[n].BT >= tq2 && p[n].BT>0)
+	{
+        printf("Process at time %d is P%d\n",time,n);			        
+	    p[n].BT=p[n].BT - tq2;
+		time+=tq2;
+		p[n].flag=1;   //counting number of times process execute
+		
+        if(p[n].BT>0)
+		insert(n);		
+					   
+	qdelete();
+	n=ready_queue[front];
+   }
+   
+   	if(p[0].flag==1)
+   	if(p[1].flag==1)
+   	if(p[2].flag==1)
+   	if(p[3].flag==1)
+   	{
+   	break;	
+   }
+}
+}
+
+void SJF()
+{
+	int i;
+	int j=4;
+	int minBT=p[0].BT;
+	int index;
+	while(j!=0)
+	{
+	for(i=0;i<4;i++)
+	{
+	if(p[i].BT<minBT)
+	{
+	 index=i;
+	}
+	else if(p[index].BT == p[i].BT)
+	{
+		if(p[index].id>p[i].id)
+		{
+			index=i;
+		}
+	}
+	}
+	printf("Process at time %d is P%d",time,index);	
+	time+=p[index].BT;
+	 p[index].BT=0;
+		if(p[index].BT==0)
+		{
+			printf("\t Process P%d completes at time: %d",index,time);
+			p[index].CT=time;
+			j--;
+		}
+	}
+	
+}
+	
 int main()
 {
 	int i;
@@ -60,6 +174,12 @@ int main()
 	p[2].BT=13;
 	p[3].BT=10;
 	
+	//giving id to processes
+	for(i=0;i<4;i++)
+	{
+		p[i].id=i;
+	}
+	
 	// keeping a backup of burst time
 	for(i=0;i<4;i++)
 	{
@@ -71,6 +191,40 @@ int main()
     {
      printf("P%d\t\t\t\t %d\t\t\t\t %d\n",i,p[i].AT,p[i].BT); 
     }
+    
+// round robin with Time quantum=3
 	firstIteration();
-		
+	
+//displaying the scenario after first iteration
+	printf("Process Id\t\t\t Arrival_TIME\t\t\tBURST_time\t\t\tBURST_TIME_LEFT\n"); 
+    for(i=0;i<4;i++)
+    {
+     printf("P%d\t\t\t\t %d\t\t\t\t %d\t\t\t\t %d\n",i,p[i].AT,p[i].BT1,p[i].BT); 
+    }
+	
+// for each process changing flag value =0
+  for(i=0;i<4;i++)
+  {
+  	p[i].flag=0;
+   }
+   
+   //round robin with Time quantum=6
+   secondIteration();
+   
+   //displaying the scenario after first iteration
+	printf("Process Id\t\t\t Arrival_TIME\t\t\tBURST_time\t\t\tBURST_TIME_LEFT\n"); 
+    for(i=0;i<4;i++)
+    {
+     printf("P%d\t\t\t\t %d\t\t\t\t %d\t\t\t\t %d\n",i,p[i].AT,p[i].BT1,p[i].BT); 
+    }
+    
+    //shortest job first
+    SJF();
+	
+    printf("Process Id\t\t\t Arrival_TIME\t\t\tBURST_time\t\t\tBURST_TIME_LEFT\n"); 
+    for(i=0;i<4;i++)
+    {
+     printf("P%d\t\t\t\t %d\t\t\t\t %d\t\t\t\t %d\n",i,p[i].AT,p[i].BT1,p[i].BT); 
+    }
+   
 }
