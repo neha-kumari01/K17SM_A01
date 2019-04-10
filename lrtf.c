@@ -46,8 +46,6 @@ int execution()
   
         else
             index = maxEatTime(3); 
-        /*cout << "Process executing at time " << totaltime 
-             << " is: P" << index + 1 << "\t"; */
         printf("Process executing at time : %d is P%d",totaltime,index);
   
         s[index].food_taken_time -= 1; 
@@ -55,10 +53,8 @@ int execution()
         i++; 
   
         if (s[index].food_taken_time == 0) { 
-            s[index].completion_time = totaltime; 
-            /*cout << " Process P" << p[index].processno  
-                 << " is completed at " << totaltime; */
-            printf("\tProcess P%d is completed at:%d",index,totaltime);
+            s[index].completion_time = totaltime;
+       printf("\tProcess P%d is completed at:%d",index,totaltime);
         } 
         printf("\n");
   
