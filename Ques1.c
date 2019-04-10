@@ -107,7 +107,7 @@ void secondIteration()
 		p[n].flag=1;   //counting number of times process execute
 		
         if(p[n].BT>0)
-		insert(n);		
+	insert(n);		
 					   
 	qdelete();
 	n=ready_queue[front];
@@ -227,4 +227,40 @@ int main()
      printf("P%d\t\t\t\t %d\t\t\t\t %d\t\t\t\t %d\n",i,p[i].AT,p[i].BT1,p[i].BT); 
     }
    
+	//calculating values for Total Waiting time
+for(i=0;i<4;i++)
+{
+	//Total time taken=completion time-arrival time
+	p[i].TAT=p[i].CT - p[i].AT;
+	// waiting time= total time taken - burst time
+	p[i].WT= p[i].TAT -p[i].BT1;
+	
+	TotalWT= TotalWT+p[i].WT;
+	
+}
+ 
+//calculating values for turn around time
+for(i=0;i<4;i++)
+{
+	TotalTAT= TotalTAT +p[i].TAT;
+}
+
+// displaying final scenario
+
+
+printf ("\nProcess_ID.\tAT\tBT\tWT\tTAT\tCT\n"); 
+for(i=0;i<3;i++)
+{
+printf ("%d\t %d\t %d\t %d\t %d\t %d\n",p[i].id,p[i].AT,p[i].BT,p[i].WT,p[i].TAT,p[i].CT); 
+}
+  
+printf("\nTOTAL WAITING TIME:%d\n",TotalWT);
+// average total waiting time
+avgw=(float)TotalWT/3;   
+printf("AVERAGE WAITING TIME:%f\n",avgw);
+printf("TURN AROUND TIME:%d\n",TotalTAT);
+float avgT=(float)TotalTAT/3;
+printf("AVERAGE TURN AROUND TIME:%f\n",avgT);
+
+
 }
