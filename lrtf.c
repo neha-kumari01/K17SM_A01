@@ -15,59 +15,57 @@ int ftk;
 }s[3];
 
 int totaltime=0;
-int T=0;
+int T=0;  // total time required to complete eating
 
-int maxEatTime(int at) 
+int maxEatTime(int at)  // tells which process will get execute after 
 { 
     int max = 0, i; 
-    for (i = 0; i < 3; i++) { 
-        if (s[i].arrival_time <= at) {
-            if (s[i].food_taken_time > s[max].food_taken_time) 
-                max = i; 
-            else if(s[max].food_taken_time==s[i].food_taken_time)
-            {
-            	if(s[max].student_id>s[i].student_id)
-            	max=i;
-			}
+    for (i = 0; i < 3; i++) 
+    { 
+        if (s[i].arrival_time <= at)           // compares arrival time
+	{                     
+          if (s[i].food_taken_time > s[max].food_taken_time)  // food eating time
+           max = i;                                          
+           else if(s[max].food_taken_time==s[i].food_taken_time)  // used when all the processes have same food_eating_time left
+           {
+            if(s[max].student_id>s[i].student_id)
+            max=i;
+	    }
         } 
-} 
+     } 
 return max;
 }
+// tells us the flow of execution
 int execution() 
 { 
   
     int index; 
-    int flag = 0; 
     int i = s[0].arrival_time; 
     while (1) { 
         if (i <= 3) { 
-            index = maxEatTime(i); 
-        } 
-  
-        else
+            index = maxEatTime(i); } 
+	else
             index = maxEatTime(3); 
         printf("Process executing at time : %d is P%d",totaltime,index);
-  
         s[index].food_taken_time -= 1; 
         totaltime += 1; 
-        i++; 
-  
-        if (s[index].food_taken_time == 0) { 
-            s[index].completion_time = totaltime;
-       printf("\tProcess P%d is completed at:%d",index,totaltime);
+        i++;   
+	 // tells us at which time which process is getting completed
+        if (s[index].food_taken_time == 0) 
+	{ 
+           s[index].completion_time = totaltime;
+           printf("\tProcess P%d is completed at:%d",index,totaltime);
         } 
-        printf("\n");
-  
+        printf("\n");  
         // loop termination condition 
         if (totaltime == T) 
             break; 
     } 
-} 
-  
-
+}
 int main()
 {
 int i;
+//assigning values to students
 s[0].student_id=2132;
 s[1].student_id=2102;
 s[2].student_id=2453;
@@ -82,36 +80,38 @@ for(i=0;i<3;i++)
 {
 printf ("S%d\t\t\t\t%d\t\t\t\t %d\t\t\t\t %d\n",i,s[i].student_id,s[i].arrival_time,s[i].food_taken_time); 
 }
+	
 //backup for food_taken_time so that to print it in end
 for(i=0;i<3;i++)
 {
 	s[i].ftk=s[i].food_taken_time;
 }
+	
 //calculating total time T 
 for(i=0;i<3;i++)
 {
 	T+=s[i].food_taken_time;
 }
-
-//spacing
 printf("\n");
 
 //executing processes
 execution();
+	
 //calculating values for Total Waiting time
 int Twt=0;
 for(i=0;i<3;i++)
 {
 	//Total time taken=completion time-arrival time
 	s[i].total_time_taken=s[i].completion_time - s[i].arrival_time;
+	
 	// waiting time= total time taken - burst time
 	s[i].waiting_time= s[i].total_time_taken -s[i].ftk;
 	
+	//calculating Total Waiting Time
 	Twt= Twt+s[i].waiting_time;
-	
 }
  
-//calculating values for turn around time
+//calculating value for turn around time
 int totalTAT=0;
 for(i=0;i<3;i++)
 {
@@ -119,8 +119,6 @@ for(i=0;i<3;i++)
 }
 
 // displaying final scenario
-
-
 printf ("\nSTUDENT NO.\tID\t AT\tFTT\tWT\tTAT\tCT\n"); 
 for(i=0;i<3;i++)
 {
@@ -134,8 +132,5 @@ printf("AVERAGE WAITING TIME:%f\n",aTwt);
 printf("TURN AROUND TIME:%d\n",totalTAT);
 float atotalTAT=(float)totalTAT/3;
 printf("AVERAGE TURN AROUND TIME:%f\n",atotalTAT);
-
-
-
 }
 
